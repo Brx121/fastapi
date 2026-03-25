@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # MySQL数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: Dev@1234
+      MYSQL_DATABASE: blogdb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    restart: always
+    networks:
+      - app-network
+
+  # FastAPI应用服务
+  fastapi-app:
+    build: .
+    container_name: fastapi-app
+    ports:
+      - "8001:8001"
+    environment:
+      - API_KEY=25f4d14f700d4ae3b520ef497b9f477f.YJUTHl39vqA8bKLI
+      - MODEL=glm-4.7-flash
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=dev
+      - DB_PASSWORD=Dev@1234
+      - DB_NAME=blogdb
+    volumes:
+      - .:/app
+    restart: always
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge

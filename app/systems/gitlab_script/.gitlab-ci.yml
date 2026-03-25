@@ -1,0 +1,31 @@
+image: python:3.12
+
+stages:
+  - run
+
+# 运行 Python 脚本
+run_python_script:
+  stage: run
+  script:
+    - echo "获取项目分支和名称..."
+    - echo "当前分支：$CI_COMMIT_REF_NAME"
+    - echo "当前项目名称：$CI_PROJECT_NAME"
+
+    # 拉取和切换到当前分支
+    - echo "拉取当前分支的代码..."
+    - git fetch origin $CI_COMMIT_REF_NAME && git checkout $CI_COMMIT_REF_NAME
+    - git pull origin $CI_COMMIT_REF_NAME
+
+    # 打包当前分支的代码
+    - echo "打包当前分支的代码..."
+    - cd ..
+    - tar -cf /opt/$CI_PROJECT_NAME.tar --exclude=$CI_PROJECT_NAME/gitlab_integration.py --exclude=$CI_PROJECT_NAME/.gitlab-ci.yml --exclude=$CI_PROJECT_NAME/.gitignore --exclude=$CI_PROJECT_NAME/.git $CI_PROJECT_NAME
+    - cd $CI_PROJECT_NAME
+
+    # 安装依赖环境
+    - pip install requests -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+    # 执行 Python 脚本
+    - echo "执行 Python 脚本..."
+    - python gitlab_integration.py /opt/$CI_PROJECT_NAME.tar $CI_PROJECT_NAME $CI_COMMIT_REF_NAME
+    - echo "脚本执行完成..."
