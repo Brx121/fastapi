@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.users.apis import router as users_router
 from app.systems.apis import router as systems_router
 from app.public.apis import router as public_router
+from app.rag.apis import router as rag_router
 
 app = FastAPI()
 
@@ -33,3 +34,4 @@ except Exception as e:
 app.include_router(users_router)
 app.include_router(systems_router)
 app.include_router(public_router)
+app.include_router(rag_router)

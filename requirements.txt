@@ -3,3 +3,9 @@ uvicorn
 sqlalchemy
 pymysql
 python-dotenv
+requests
+dashscope
+qdrant-client
+PyPDF2
+openpyxl
+python-docx
